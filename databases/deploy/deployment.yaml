@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql-deployment
+  labels:
+    app: mysql-react
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql-react
+  template:
+    metadata:
+      labels:
+        app: mysql-react
+    spec:
+      containers:
+      - name: mysql-react
+        image: mysql_react:dev
+        ports:
+        - containerPort: 3306
+        volumeMounts:
+        - name: mysql-persistent-storage
+          mountPath: /var/lib/mysql
+      volumes:
+      - name: mysql-persistent-storage
+        persistentVolumeClaim:
+          claimName: mysql-pvc-claim
