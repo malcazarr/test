@@ -1,6 +1,7 @@
 import React from 'react';
 
 function Home() {
+    console.log("RENDER HOME")
     return (
         <div>
             <div className="row">

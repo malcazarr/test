@@ -1,25 +1,43 @@
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useEffect } from 'react';
+import { connect } from 'react-redux';
+import { Redirect } from 'react-router-dom';
+import { setLogin, setLogout } from '../redux/asyncActions/authAsyncActions';
 import './css/Login.css'
 import logo from './images/R.gif'
 
 
 
-function Login() {
-    
-    const state = useSelector(state => state.components.filter(component => component.id === 1));
-    
-    const dispatch =  useDispatch();
+function Login({auth, login, logout}) {
+    console.log("RENDER LOGIN")
+    console.log(auth)
 
     const setLogin = () =>{
-        console.log("Lanzando Login")
-        console.log(state)
-        dispatch({type: "TEST"})
+        console.log("Doing Login")
+        login({username: "admin", password: "123456"})        
+       
+        /* if (stateAppReducer.status.authenticated === true){
+            console.log("REDIRECCIONANDO")
+            return <Redirect to="/home" />
+        } */
     }
-    return( 
+
+    const setLogout = () =>{
+        logout()
+    }
+
+    useEffect(() =>{
+        console.log("EFFECT")
+        console.log(auth)
+    })
+
+    
+
+   if (!auth.auth){
+    return ( 
         <div>
             <div styles={{ backgroundImage:`url(${logo})`}}></div>
-            <div className="px-auto py-auto">
+            <div className="">
                 <div className="card card-login">
                         <div className="pt-2">
                             <input type="text" placeholder="Username"/>
@@ -30,13 +48,35 @@ function Login() {
                         <div className="text-right">
                             <a href="/forgot_password"className="mr-1"><small>Forgot password?</small></a>
                         </div>
-                        <div className="pt-2">
-                            <button className="btn btn-signin" onClick={setLogin}>Sign in</button>
-                        </div>
+                        {!auth.auth && (
+                            <div className="pt-2">
+                                <button className="btn btn-signin" onClick={setLogin}>Sign in</button>
+                            </div>
+                        )}
+                        { auth.auth && (
+                            <div className="pt-2">
+                                <button className="btn btn-signin" onClick={setLogout}>Logout</button>
+                            </div>
+                        )}
                 </div>
             </div>
         </div>
         )
+   }else{
+    return <Redirect to="/home" />
+   }
+}
+
+    const mapStateToProps = state =>{
+        return {
+            auth : state.authReducer
+        }
+    }
+    const mapDispatchToProps = dispatch =>{
+        return {
+            login : (data) => dispatch(setLogin(data)),
+            logout : () => dispatch(setLogout())
+        }
     }
 
-export default Login;
+export default connect(mapStateToProps, mapDispatchToProps)(Login);
